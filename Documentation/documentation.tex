@@ -1,0 +1,52 @@
+\documentclass[a4paper]{article}
+\usepackage{polski}
+\usepackage{geometry}[top=2cm, left = 2.5 cm, right = 2.5cm]
+\title{
+	\textbf{Zastosowanie systemów wbudowanych}\\
+	\textit{Raspberry Pi - Telegram Bot i web-aplikacja dla śledzenia klimatu otoczenia}
+	}
+\date{}
+
+\begin{document}
+\begin{table}
+	\vspace{-2cm}
+	\begin{tabular}{rl}
+		Autorzy & \\
+			\hline
+		Kostiukov Oleksii 	& 231972\\
+		Uladzimir Lipski	& 238961\\
+		Vikatr Hasiul 		& 231862\\[0.4cm]
+			\hline
+		Prowadzący 	& Dr inż. Marek Woda \\
+		Termin		& Środa, godzina: 13:15\\
+	\end{tabular}
+\end{table}
+
+{\let\newpage\relax\maketitle}
+\maketitle
+\thispagestyle{empty} %no page number for this page
+
+\maketitle
+\newpage
+\section{Cel projektu}
+	Celem danego projektu jest wykorzystanie platformy \textit{Raspberry} 
+	do realizacji \textit{Telegram bot'u} oraz punktu pomiarowego.
+
+	\paragraph{Telegam bot} jest aplikacją wykorzystującą interfejs aplikacji \textit{Telegram}
+	w celu komunikacji z wybranymi użytkownikami (którzy posiadają możliwość komunikacji ze stworzonym
+	\textit{bot'em}).
+
+	\paragraph{Punkt pomiarowy.} Platforma \textit{Raspberry} umożliwia podłączenie licznych
+	czujników, dane z których można gromadzić na urządzeniu lub wysyłać do serwerów zdalnych.
+	W danym projekcie zostaną podłączone czujniki:
+	\begin{enumerate}
+		\item temperatury,
+		\item wilgotności,
+		\item światła
+	\end{enumerate}
+	dane z których będą przechowywane na urządzeniu w celu przetwarzania i 
+	wyświetlania na stronie \textbf{WEB} w postaci interaktywnego wykresu.
+	
+	Dodatkowo dany zbiór danych zostanie wykorzystany przez \textit{Telegram bot}
+	w celu powiadomienia użytkownika o aktualnych danych.
+\end{document}
