@@ -3,12 +3,19 @@
 	<head>
 		<title>Web-app</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style/main.css') }}">
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script src="{{ url_for('static', filename='scripts/charts.js') }}"></script>
 	</head>
 	<body>
 		<div id="container">
             <div id="chart-container">
-                <text>A place for your container</text>
+                <div id="temperature-chart"></div>
+                <div id="light-chart"></div>
+                <div id="humidity-chart"></div>
             </div>
         </div>
+        <script>
+            drawAllCharts();
+        </script>
 	</body>
 </html>
