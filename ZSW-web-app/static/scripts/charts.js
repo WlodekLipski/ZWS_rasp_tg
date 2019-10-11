@@ -1,10 +1,10 @@
 chartRanges = {"temperature" : ["17-19", "20-22", "23-25"],
-    "light": ["350-450", "450-550", "550-650"],
-    "humidity":["0-20", "20-40", "40-60", "60-80", "80-100"]}
+    "light": ["350-450", "451-550", "551-650"],
+    "humidity":["0-20", "21-40", "41-60", "61-80", "81-100"]}
 
-chartData = {"temperature" : [5, 10, 2],
-    "light": [30, 50, 20],
-    "humidity":[1, 2, 5, 4, 0]}
+chartData = {"temperature" : [],
+    "light": [],
+    "humidity":[]}
 
 
 function drawChart(chart_divId, chart_title) {
@@ -33,3 +33,90 @@ function drawAllCharts(){
         drawChart(chartDiv.id, chartTitle);
     }
 }
+
+function start(){
+    initializeArrays();
+    refreshData();
+}
+
+function initializeArrays(){
+    for(let prop in chartRanges){
+        chartData[prop] = new Array(chartRanges[prop].length);
+        for(var rangeIndex=0; rangeIndex<chartRanges[prop].length; ++rangeIndex)
+            chartData[prop][rangeIndex] = 0;
+    }
+}
+
+// Read data from csv file and create charts right away and then repeat it every 5 sec
+function refreshData(){
+    var csvData = getDataFromCsv("exampleData.csv");
+    updateData(csvData);
+    drawAllCharts();
+    const interval = setInterval(function() {
+            initializeArrays();
+            csvData = getDataFromCsv("exampleData.csv")
+            updateData(csvData);
+            drawAllCharts();
+     }, 5000);
+}
+
+function getDataFromCsv(url){
+    var request = new XMLHttpRequest();
+    request.open("GET", url, false);
+    request.setRequestHeader('Cache-Control', 'no-cache');
+    request.send(null);
+
+    var csvData = new Array();
+    var jsonObject = request.responseText.split(/\r?\n|\r/);
+    for (var i = 0; i < jsonObject.length; i++) {
+      csvData.push(jsonObject[i].split(','));
+    }
+    return csvData;
+}
+
+//
+function updateData(csvData){
+    var optionIndex = 0;
+    var value = 0;
+    for(let option of csvData[0][0].split(";"))
+    {
+        if(option!="" && option!=";") {
+            option = option.toLowerCase();
+            for (var dataItself = 1; dataItself < csvData.length; dataItself++) {
+                var csvValue = csvData[dataItself][0].split(";")[optionIndex];
+                if (csvValue != "" && csvValue != ";") {
+                    value = parseInt(csvValue);
+                    addValueToChart(value, option.toLowerCase());
+                }
+            }
+            optionIndex++;
+        }
+    }
+}
+
+
+function addValueToChart(value, chart_title){
+    var rangeIndex = getRangeIndex(value, chart_title);
+    if(rangeIndex!=-1)
+        chartData[chart_title][rangeIndex] +=1;
+}
+
+function getRangeIndex(value, chart_title){
+    var index = 0;
+
+    for(let range of chartRanges[chart_title]) {
+        if (isInRange(range, value))
+        {
+            return index;
+        }
+        index++;
+    }
+    return -1;
+}
+
+function isInRange(range, value){
+    if(value>=parseInt(range.split("-")[0]) && value<=parseInt(range.split("-")[1]))
+        return true;
+    return false;
+}
+
