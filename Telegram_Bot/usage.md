@@ -9,4 +9,4 @@ token=<YOUR TELEGRAM BOT TOKEN>
 ```
 4. python ready.py
   * After launching process, telegram bot with specified
-toke will responce for your `/command`
+token will provide a responce for your `/command`
