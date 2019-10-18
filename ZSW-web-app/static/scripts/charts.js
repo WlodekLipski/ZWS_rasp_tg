@@ -22,7 +22,7 @@ function drawChart(chart_divId, chart_title) {
       font: {size: 18}
     };
 
-    Plotly.newPlot(chart_divId, data, layout);
+    Plotly.react(chart_divId, data, layout);
 }
 
 function drawAllCharts(){
@@ -38,6 +38,7 @@ function start(){
     initializeArrays();
     refreshData();
 }
+
 
 function initializeArrays(){
     for(let prop in chartRanges){
