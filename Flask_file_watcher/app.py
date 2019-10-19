@@ -1,6 +1,6 @@
 import sys
 from flask import Flask
-form flask import render_template
+from flask import render_template
 from flask_socketio import SocketIO
 from watchdog.observers import Observer
 from watchdog.events import RegexMatchingEventHandler
