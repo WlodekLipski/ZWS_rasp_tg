@@ -26,6 +26,7 @@ function drawChart(chart_divId, chart_title) {
 }
 
 function drawAllCharts(){
+    console.log("dralALl");
     var chartTitle = "";
     for(let chartDiv of document.getElementById("chart-container").children)
     {
@@ -34,9 +35,9 @@ function drawAllCharts(){
     }
 }
 
-function start(){
-    initializeArrays();
-    refreshData();
+function start(data){
+        initializeArrays();
+        refreshData(data);
 }
 
 
@@ -49,19 +50,21 @@ function initializeArrays(){
 }
 
 // Read data from csv file and create charts right away and then repeat it every 5 sec
-function refreshData(){
-    var csvData = getDataFromCsv("exampleData.csv");
-    updateData(csvData);
+function refreshData(data){
+    var csvData = data;
+    if(data.length)
+        updateData(csvData);
     drawAllCharts();
     const interval = setInterval(function() {
-            initializeArrays();
-            csvData = getDataFromCsv("exampleData.csv")
-            updateData(csvData);
-            drawAllCharts();
+            var request = new XMLHttpRequest();
+            request.open("GET", window.location.href, true);
+            request.setRequestHeader('Cache-Control', 'no-cache');
+            request.send(null);
      }, 5000);
+
 }
 
-function getDataFromCsv(url){
+/*function getDataFromCsv(url){
     var request = new XMLHttpRequest();
     request.open("GET", url, false);
     request.setRequestHeader('Cache-Control', 'no-cache');
@@ -73,7 +76,7 @@ function getDataFromCsv(url){
       csvData.push(jsonObject[i].split(','));
     }
     return csvData;
-}
+}*/
 
 //
 function updateData(csvData){
