@@ -7,6 +7,15 @@ chartData = {"temperature" : [],
     "humidity":[]}
 
 
+var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+socket.on('modified', function(data) {
+    console.log('File was modified');
+    //location.reload();
+});
+
+
+
 function drawChart(chart_divId, chart_title) {
    var trace = {
         type: 'bar',
@@ -26,7 +35,6 @@ function drawChart(chart_divId, chart_title) {
 }
 
 function drawAllCharts(){
-    console.log("dralALl");
     var chartTitle = "";
     for(let chartDiv of document.getElementById("chart-container").children)
     {
@@ -55,12 +63,12 @@ function refreshData(data){
     if(data.length)
         updateData(csvData);
     drawAllCharts();
-    const interval = setInterval(function() {
+    /*const interval = setInterval(function() {
             var request = new XMLHttpRequest();
             request.open("GET", window.location.href, true);
             request.setRequestHeader('Cache-Control', 'no-cache');
             request.send(null);
-     }, 5000);
+     }, 5000);*/
 
 }
 
