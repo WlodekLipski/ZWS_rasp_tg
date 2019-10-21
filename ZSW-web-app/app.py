@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 from threading import Thread
-import time
+import time, os
 
 async_mode = None
 
@@ -23,6 +23,7 @@ if async_mode == 'eventlet':
 app = Flask(__name__, static_url_path="")
 socketio = SocketIO(app, async_mode=async_mode)
 thread = None
+lastModified = None
 
 @app.route('/')
 def mainpage():
@@ -34,28 +35,26 @@ def mainpage():
     return render_template("index.html", data=[])
 
 def readfile(path):
-    print("STAART")
+    global lastModified
     while True:
-        data = []
-        f = open(path, "r")
-        line = f.readline()
-        line = line.strip('\n')
-        while line:
-            arr = [line]
-            data.append(arr)
+        checkModified = os.path.getmtime(path)
+        if checkModified != lastModified:
+            data = []
+            f = open(path, "r")
             line = f.readline()
             line = line.strip('\n')
-        if line:
-            arr = [line]
-            data.append(arr)
-        print(data)
-        socketio.emit('modified', )
+            while line:
+                arr = [line]
+                data.append(arr)
+                line = f.readline()
+                line = line.strip('\n')
+            if line:
+                arr = [line]
+                data.append(arr)
+            print(data)
+            socketio.emit('modified', {'data': data})
+            lastModified=checkModified
         time.sleep(5)
-
-def printSmth():
-    print("TROLOLO")
-
-
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
