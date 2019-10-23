@@ -62,7 +62,7 @@ def readfile(path):
     return data
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, host='0.0.0.0', debug=True)
     if observer is not None:
         observer.stop()
         observer.join()
