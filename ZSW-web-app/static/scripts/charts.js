@@ -11,9 +11,7 @@ var socket = io.connect('http://' + document.domain + ':' + location.port);
 
 socket.on('modified', function(data) {
     var newData = data['data'];
-    console.log(newData);
     start(newData)
-    //location.reload();
 });
 
 
@@ -59,36 +57,13 @@ function initializeArrays(){
     }
 }
 
-// Read data from csv file and create charts right away and then repeat it every 5 sec
 function refreshData(data){
     var csvData = data;
     if(data.length)
         updateData(csvData);
     drawAllCharts();
-    /*const interval = setInterval(function() {
-            var request = new XMLHttpRequest();
-            request.open("GET", window.location.href, true);
-            request.setRequestHeader('Cache-Control', 'no-cache');
-            request.send(null);
-     }, 5000);*/
-
 }
 
-/*function getDataFromCsv(url){
-    var request = new XMLHttpRequest();
-    request.open("GET", url, false);
-    request.setRequestHeader('Cache-Control', 'no-cache');
-    request.send(null);
-
-    var csvData = new Array();
-    var jsonObject = request.responseText.split(/\r?\n|\r/);
-    for (var i = 0; i < jsonObject.length; i++) {
-      csvData.push(jsonObject[i].split(','));
-    }
-    return csvData;
-}*/
-
-//
 function updateData(csvData){
     var optionIndex = 0;
     var value = 0;
@@ -107,7 +82,6 @@ function updateData(csvData){
         }
     }
 }
-
 
 function addValueToChart(value, chart_title){
     var rangeIndex = getRangeIndex(value, chart_title);

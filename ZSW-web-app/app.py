@@ -7,11 +7,11 @@ from watchdog.events import RegexMatchingEventHandler
 
 app = Flask(__name__, static_url_path="")
 socketio = SocketIO(app, async_mode='threading')
-thread = None
-lastModified = None
 
 thread = None
 observer = None
+
+csvFileName = "static/exampleData.csv"
 
 class CsvWatcher(RegexMatchingEventHandler):
     csv_file = [r".*\.csv"]
@@ -19,7 +19,8 @@ class CsvWatcher(RegexMatchingEventHandler):
         super().__init__(self.csv_file)
 
     def on_modified(self,event):
-        data = readfile("static/exampleData.csv")
+        global csvFileName
+        data = readfile(csvFileName)
         socketio.emit('modified', {'data': data})
 
 
@@ -34,7 +35,8 @@ def background_thread():
 
 @app.route('/')
 def index():
-    data = readfile("static/exampleData.csv")
+    global csvFileName
+    data = readfile(csvFileName)
     return render_template('index.html', data=data)
 
 
