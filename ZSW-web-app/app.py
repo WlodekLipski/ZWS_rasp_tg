@@ -1,60 +1,66 @@
-from flask import Flask, render_template
-from flask_socketio import SocketIO, emit
-from threading import Thread
-import time, os
-
-async_mode = None
-
-if async_mode is None:
-    try:
-        import eventlet
-        async_mode = 'eventlet'
-    except ImportError:
-        pass
-
-    if async_mode is None:
-        async_mode = 'threading'
-
-if async_mode == 'eventlet':
-    import eventlet
-    eventlet.monkey_patch()
-
+import sys
+from flask import Flask
+from flask import render_template
+from flask_socketio import SocketIO
+from watchdog.observers import Observer
+from watchdog.events import RegexMatchingEventHandler
 
 app = Flask(__name__, static_url_path="")
-socketio = SocketIO(app, async_mode=async_mode)
+socketio = SocketIO(app, async_mode='threading')
 thread = None
 lastModified = None
 
+thread = None
+observer = None
+
+class CsvWatcher(RegexMatchingEventHandler):
+    csv_file = [r".*\.csv"]
+    def __init__(self):
+        super().__init__(self.csv_file)
+
+    def on_modified(self,event):
+        data = readfile("static/exampleData.csv")
+        socketio.emit('modified', {'data': data})
+
+
+def background_thread():
+    global observer
+    path = sys.argv[1] if len(sys.argv) > 1 else '.'
+    event_handler = CsvWatcher()
+    observer = Observer()
+    observer.schedule(event_handler, path, recursive=True)
+    observer.start()
+
+
 @app.route('/')
-def mainpage():
+def index():
+    data = readfile("static/exampleData.csv")
+    return render_template('index.html', data=data)
+
+
+@socketio.on('connect')
+def test_connect():
     global thread
     if thread is None:
-        thread = Thread(target=readfile, args=("static/exampleData.csv",))
-        thread.daemon = True
-        thread.start()
-    return render_template("index.html", data=[])
+        thread = socketio.start_background_task(target=background_thread)
 
 def readfile(path):
-    global lastModified
-    while True:
-        checkModified = os.path.getmtime(path)
-        if checkModified != lastModified:
-            data = []
-            f = open(path, "r")
-            line = f.readline()
-            line = line.strip('\n')
-            while line:
-                arr = [line]
-                data.append(arr)
-                line = f.readline()
-                line = line.strip('\n')
-            if line:
-                arr = [line]
-                data.append(arr)
-            print(data)
-            socketio.emit('modified', {'data': data})
-            lastModified=checkModified
-        time.sleep(5)
+    data = []
+    f = open(path, "r")
+    line = f.readline()
+    line = line.strip('\n')
+    while line:
+        arr = [line]
+        data.append(arr)
+        line = f.readline()
+        line = line.strip('\n')
+    if line:
+        arr = [line]
+        data.append(arr)
+    return data
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', debug=True)
+    socketio.run(app, debug=True)
+    if observer is not None:
+        observer.stop()
+        observer.join()

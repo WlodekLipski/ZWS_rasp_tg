@@ -10,7 +10,7 @@ chartData = {"temperature" : [],
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 
 socket.on('modified', function(data) {
-    newData = data['data'];
+    var newData = data['data'];
     console.log(newData);
     start(newData)
     //location.reload();
