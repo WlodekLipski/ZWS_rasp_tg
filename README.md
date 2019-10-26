@@ -8,3 +8,9 @@ Usage:
 	Example address: "156.17.169.213:5000".
 	Where "156.17.169.213" is your ip address. It can be taken from 2ip.ru or anywhere else.
 	If your device(for example phone) is in the same network (for example eduroam), you can go to web-app using this device.
+	
+Download chart as image:
+1. Run downloadChartAsImage script with name of chart as argument:
+	"python downloadChartAsImage.py temperature"
+2. Chart png will be downloaded where your usual browser downloads files.
+3. Saved png can be sent to user via telegram.
