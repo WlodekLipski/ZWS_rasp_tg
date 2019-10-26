@@ -27,7 +27,6 @@ class Sensors():
 
         # integer division
         _sleep //= 2
-        print(_sleep)
         if self.thread is None:
             self.is_running.clear()
             self.runner.set_sleep(_sleep)
@@ -53,12 +52,3 @@ class Sensors():
         self.runner.terminate(self.is_running)
         self.thread.join()
         self.thread = None
-
-my_sensors = Sensors(sensors_state, is_running)
-my_sensors.reset_sensors(2)
-time.sleep(10)
-my_sensors.reset_sensors(5)
-time.sleep(10)
-print('After terminate')
-my_sensors.stop_sensors()
-my_sensors.runner.get_sleep()
