@@ -1,11 +1,10 @@
-import runner
-import light
 import time
+import runner
 import threading
 
 thread = None
 is_running = threading.Event()
-sensors_state = runner.Runner()
+sensors_state = runner.Runner(5)
 
 class Sensors():
     """
@@ -13,12 +12,11 @@ class Sensors():
     :param _event: Event object
     """
     def __init__(self, _state, _event):
-        self.state = _state
-        self.is_running = _event
         self.thread = None
-        self.reset_sensors()
+        self.runner = _state
+        self.is_running = _event
 
-    def reset_sensors():
+    def reset_sensors(self, _sleep=5):
         """
         Funciton initializing thread
         which will collect data from sensors
@@ -28,8 +26,8 @@ class Sensors():
         """
         if self.thread is None:
             self.is_running.clear()
-            self.state._set_sleep()
-            self.thread = threading.Thread(target=self.state._launch, args=(self.is_running,))
+            self.runner.set_sleep(_sleep)
+            self.thread = threading.Thread(target=self.runner.launch, args=(self.is_running,))
             self.thread.start()
         else:
             """
@@ -37,29 +35,26 @@ class Sensors():
             if new value in config file occur
             or the function was called directly
             """
-            self.state._terminate(self.is_running)
+            self.runner.terminate(self.is_running)
             self.thread.join()
             self.thread = None
-            self.state._set_sleep()
-            return self.reset_sensors()
+            self.runner.set_sleep()
+            return self.reset_sensors(_sleep)
 
-    def stop_sensors():
+    def stop_sensors(self):
         """
         Function stopping sensors thread
         End of communication with sensors
         """
-        self.state._terminate(self.is_running)
+        self.runner.terminate(self.is_running)
         self.thread.join()
         self.thread = None
 
-reset_sensors()
+my_sensors = Sensors(sensors_state, is_running)
+my_sensors.reset_sensors(2)
 time.sleep(10)
-
-print(reset_sensors())
-
+my_sensors.reset_sensors(5)
+time.sleep(10)
 print('After terminate')
-time.sleep(20)
-
-stop_sensors();
-print('After terminate')
-sensors_state._print()
+my_sensors.stop_sensors()
+my_sensors.runner.get_sleep()
