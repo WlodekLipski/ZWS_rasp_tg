@@ -1,9 +1,5 @@
 import time
 import smbus
-import configparser
-
-config = configparser.ConfigParser()
-config.read('sensors.ini')
 
 class BH1750():
     """ Implement BH1750 communication. """
@@ -32,11 +28,6 @@ class BH1750():
         self.addr = addr
         self.power_down()
         self.set_sensitivity()
-        self.sleep = 10
-        try:
-            self.sleep = config.get('CONFIG', 'sleep')
-        except configparser.NoSectionError:
-            print('Default sleep timeout is set: ', self.sleep)
 
     def _set_mode(self, mode):
         self.mode = mode

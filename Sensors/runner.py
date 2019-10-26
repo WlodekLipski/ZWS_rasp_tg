@@ -1,9 +1,9 @@
-#import Adafruit_DHT
 import time
 import smbus
 import data
 import threading
 import bh1750
+import dht11
 
 """
 Class launching thread
@@ -16,6 +16,7 @@ class Runner():
         self.data = data.Sensors_data()
         self.bus = smbus.SMBus(1)
         self.light = bh1750.BH1750(self.bus)
+        self.dht = dht11.DHT()
 
     def set_sleep(self, _sleep=None):
         if _sleep is not None:
@@ -44,21 +45,20 @@ class Runner():
 
     def launch(self, is_running):
         while not is_running.is_set():
-            _light  = int(self.light.measure_high_res())
-            """
-            Values from dht needed
-            Hook to append data to a file
-            _temp _light _ humidity
-            """
-            time.sleep(self.sleep)
+            _dht = self.dht.read()
+            if _dht[0] == -1:
+                time.sleep(self.sleep)
+                pass
+            else:
+                """
+                Collecting data and writing to a 
+                file
+                """
+                _humid = _dht[0]
+                _temp = _dht[1]
+                _light  = int(self.light.measure_high_res())
+                self.data.append_data(_temp, _light, _humid)
+                time.sleep(self.sleep)
 
     def terminate(self, is_running):
         is_running.set()
-
-#sensor = Adafruit_DHT.DHT11
-#pin = 4
-#humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
-#if humidity is not None or temperature is not None:
-#    print('Temperature={0:0.1f}*C Humidity={1:0.1f}%'.format(temperature, humidity))
-#else:
-#    print('Failed to get temperature or humidity')
