@@ -7,26 +7,50 @@ thread = None
 is_running = threading.Event()
 sensors_state = runner.Runner()
 
-def reset_sensors():
-    global thread
-    if thread is None:
-        is_running.clear()
-        sensors_state._set_sleep()
-        thread = threading.Thread(target=sensors_state._launch, args=(is_running,))
-        thread.start()
-        return 0
-    else:
-        sensors_state._terminate(is_running)
-        thread.join()
-        thread = None
-        sensors_state._set_sleep()
-        return reset_sensors()
+class Sensors():
+    """
+    :param _state: Runner object
+    :param _event: Event object
+    """
+    def __init__(self, _state, _event):
+        self.state = _state
+        self.is_running = _event
+        self.thread = None
+        self.reset_sensors()
 
-def stop_sensors():
-    global thread
-    sensors_state._terminate(is_running)
-    thread.join()
-    thread = None
+    def reset_sensors():
+        """
+        Funciton initializing thread
+        which will collect data from sensors
+        based on provieded in '*.ini' file
+        'sleep' timeout
+        Timeout = [1,3600]
+        """
+        if self.thread is None:
+            self.is_running.clear()
+            self.state._set_sleep()
+            self.thread = threading.Thread(target=self.state._launch, args=(self.is_running,))
+            self.thread.start()
+        else:
+            """
+            Relaunching sensors
+            if new value in config file occur
+            or the function was called directly
+            """
+            self.state._terminate(self.is_running)
+            self.thread.join()
+            self.thread = None
+            self.state._set_sleep()
+            return self.reset_sensors()
+
+    def stop_sensors():
+        """
+        Function stopping sensors thread
+        End of communication with sensors
+        """
+        self.state._terminate(self.is_running)
+        self.thread.join()
+        self.thread = None
 
 reset_sensors()
 time.sleep(10)
