@@ -1,5 +1,5 @@
-chartRanges = {"temperature" : ["17-19", "20-22", "23-25"],
-    "light": ["350-450", "451-550", "551-650"],
+chartRanges = {"temperature" : ["16 or lower", "17-19", "20-22", "23-25", "26 or higher"],
+    "light": ["349 or lower","350-450", "451-550", "551-650", "651 or higher"],
     "humidity":["0-20", "21-40", "41-60", "61-80", "81-100"]}
 
 chartData = {"temperature" : [],
@@ -67,13 +67,13 @@ function refreshData(data){
 function updateData(csvData){
     var optionIndex = 0;
     var value = 0;
-    for(let option of csvData[0][0].split(";"))
+    for(let option of csvData[0][0].split(","))
     {
-        if(option!="" && option!=";") {
+        if(option!="" && option!=",") {
             option = option.toLowerCase();
             for (var dataItself = 1; dataItself < csvData.length; dataItself++) {
-                var csvValue = csvData[dataItself][0].split(";")[optionIndex];
-                if (csvValue != "" && csvValue != ";") {
+                var csvValue = csvData[dataItself][0].split(",")[optionIndex];
+                if (csvValue != "" && csvValue != ",") {
                     value = parseInt(csvValue);
                     addValueToChart(value, option.toLowerCase());
                 }
@@ -103,8 +103,24 @@ function getRangeIndex(value, chart_title){
 }
 
 function isInRange(range, value){
-    if(value>=parseInt(range.split("-")[0]) && value<=parseInt(range.split("-")[1]))
+    if(range.includes("-"))
+    {
+        if(value>=parseInt(range.split("-")[0]) && value<=parseInt(range.split("-")[1]))
         return true;
+    }
+    else
+    {
+        if(range.includes("or higher"))
+        {
+            if(value>=parseInt(range.split(" ")[0]))
+                return true;
+        }
+        else if(range.includes("or lower"))
+        {
+            if(value<=parseInt(range.split(" ")[0]))
+                return true;
+        }
+    }
     return false;
 }
 
