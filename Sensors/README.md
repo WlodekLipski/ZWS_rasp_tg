@@ -11,3 +11,5 @@ The output is a .csv file with
 * Humidity
 
 Process writing to a file an average from 2 last measurements.
+
+### sensors_data.py is an entry point
