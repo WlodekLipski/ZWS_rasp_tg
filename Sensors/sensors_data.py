@@ -18,10 +18,9 @@ class Sensors():
 
     def reset_sensors(self, _sleep=5):
         """
-        Funciton initializing thread
+        Funciton initialize the thread
         which will collect data from sensors
-        based on provieded in '*.ini' file
-        'sleep' timeout
+        based on provieded 'sleep' timeout
         Timeout = [1,3600]
         """
 
@@ -35,8 +34,6 @@ class Sensors():
         else:
             """
             Relaunching sensors
-            if new value in config file occur
-            or the function was called directly
             """
             self.runner.terminate(self.is_running)
             self.thread.join()

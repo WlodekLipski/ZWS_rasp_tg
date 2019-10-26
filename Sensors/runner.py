@@ -31,10 +31,6 @@ class Runner():
                     self.sleep = 1
 
             except ValueError:
-                """
-                Default value in case of errors
-                in config file
-                """
                 self.sleep = 0xff
         else:
             self.set_sleep(0xff)
@@ -51,8 +47,7 @@ class Runner():
                 pass
             else:
                 """
-                Collecting data and writing to a 
-                file
+                Collecting data and writing to a file
                 """
                 _light  = int(self.light.measure_high_res())
                 self.data.save_average([_temp, _light, _humid])
