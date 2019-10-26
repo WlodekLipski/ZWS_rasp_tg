@@ -1,4 +1,4 @@
-import sys
+import sys, os
 from flask import Flask
 from flask import render_template
 from flask_socketio import SocketIO
@@ -11,7 +11,7 @@ socketio = SocketIO(app, async_mode='threading')
 thread = None
 observer = None
 
-csvFileName = "static/exampleData.csv"
+csvFileName = "../Sensors/data.csv"
 
 class CsvWatcher(RegexMatchingEventHandler):
     csv_file = [r".*\.csv"]
@@ -26,7 +26,7 @@ class CsvWatcher(RegexMatchingEventHandler):
 
 def background_thread():
     global observer
-    path = sys.argv[1] if len(sys.argv) > 1 else '.'
+    path = os.path.join("..", "Sensors")
     event_handler = CsvWatcher()
     observer = Observer()
     observer.schedule(event_handler, path, recursive=True)
