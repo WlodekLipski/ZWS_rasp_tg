@@ -26,7 +26,8 @@ class Sensors():
         """
 
         # integer division
-        _sleep = sleep // 2
+        _sleep //= 2
+        print(_sleep)
         if self.thread is None:
             self.is_running.clear()
             self.runner.set_sleep(_sleep)

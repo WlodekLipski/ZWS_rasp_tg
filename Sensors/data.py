@@ -6,18 +6,17 @@ class Sensors_data():
     def __init__(self, file_name='data.csv'):
         self.data = None
         self.tmp_data = None
-        self.average = False
+        self.is_average = False
         self.file_name = file_name
 
     def average(self, values):
-        for i in values:
+        for i in range(0, len(values)):
             self.data[i] = (self.data[i] + values[i]) // 2
 
     def save_average(self, values):
-        if not average:
-            for i in values:
-                self.data[i] = values[i]
-            self.average = True
+        if not self.is_average:
+            self.data = values
+            self.is_average = True
         else:
             self.average(values)
             """
@@ -31,4 +30,5 @@ class Sensors_data():
             with open(self.file_name, mode='a') as fd:
                 fd.write(data)
 
-            self.average = False
+            self.is_average = False
+        return self.is_average
