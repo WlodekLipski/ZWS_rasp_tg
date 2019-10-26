@@ -24,6 +24,9 @@ class Sensors():
         'sleep' timeout
         Timeout = [1,3600]
         """
+
+        # integer division
+        _sleep = sleep // 2
         if self.thread is None:
             self.is_running.clear()
             self.runner.set_sleep(_sleep)
