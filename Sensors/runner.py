@@ -1,6 +1,8 @@
 #import Adafruit_DHT
 import time
+import smbus
 import threading
+import bh1750
 
 """
 Class launching thread
@@ -10,6 +12,8 @@ collecting data from sensors
 class Runner():
     def __init__(self, _sleep):
         self.sleep = _sleep
+        self.bus = smbus.SMBus(1)
+        self.light = bh1750.BH1750(self.bus)
 
     def set_sleep(self, _sleep=None):
         if _sleep is not None:
@@ -39,6 +43,7 @@ class Runner():
     def launch(self, is_running):
         while not is_running.is_set():
             print('Thread hello')
+            print('Light level : {:3.2f} lx'.format(self.light.measure_high_res()))
             time.sleep(self.sleep)
 
     def terminate(self, is_running):

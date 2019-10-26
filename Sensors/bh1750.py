@@ -117,23 +117,3 @@ class BH1750():
 
     def measure_high_res2(self, additional_delay=0):
         return self.do_measurement(self.ONE_TIME_HIGH_RES_MODE_2, additional_delay)
-
-
-def main():
-
-    #bus = smbus.SMBus(0) # Rev 1 Pi uses 0
-    bus = smbus.SMBus(1)  # Rev 2 Pi uses 1
-    sensor = BH1750(bus)
-
-    while True:
-        print('Sensitivity: {:d}'.format(sensor.mtreg))
-        for measurefunc, name in [(sensor.measure_low_res, "Low Res "),
-                                  (sensor.measure_high_res, "HighRes "),
-                                  (sensor.measure_high_res2, "HighRes2")]:
-            print('{} Light Level : {:3.2f} lx'.format(name, measurefunc()))
-        sensor.set_sensitivity((sensor.mtreg + 10) % 255)
-        time.sleep(1)
-
-
-if __name__=="__main__":
-    main()
