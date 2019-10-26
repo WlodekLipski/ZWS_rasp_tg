@@ -1,6 +1,7 @@
 #import Adafruit_DHT
 import time
 import smbus
+import data
 import threading
 import bh1750
 
@@ -12,6 +13,7 @@ collecting data from sensors
 class Runner():
     def __init__(self, _sleep):
         self.sleep = _sleep
+        self.data = data.Sensors_data()
         self.bus = smbus.SMBus(1)
         self.light = bh1750.BH1750(self.bus)
 
@@ -42,8 +44,12 @@ class Runner():
 
     def launch(self, is_running):
         while not is_running.is_set():
-            print('Thread hello')
-            print('Light level : {:3.2f} lx'.format(self.light.measure_high_res()))
+            _light  = int(self.light.measure_high_res())
+            """
+            Values from dht needed
+            Hook to append data to a file
+            _temp _light _ humidity
+            """
             time.sleep(self.sleep)
 
     def terminate(self, is_running):
