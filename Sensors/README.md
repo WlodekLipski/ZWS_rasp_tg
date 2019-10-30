@@ -13,3 +13,12 @@ The output is a .csv file with
 Process writing to a file an average from 2 last measurements.
 
 ### sensors_data.py is an entry point
+
+## Plotting data
+Small script that using padas, matplotlib modules
+to draw .jpeg pictures
+
+Before drawing, please pass to a scipt valid name (name from csv columns)
+Script using tails (the oldest ones) values. It's possible to specify an amount
+of last values:
+`create_plot(column_name, tail_size=10)`

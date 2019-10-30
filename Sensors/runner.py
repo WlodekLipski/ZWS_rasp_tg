@@ -41,18 +41,16 @@ class Runner():
 
     def launch(self, is_running):
         while not is_running.is_set():
-            _dht = self.dht.read()
-            if _dht[0] == -1:
+            _humid, _temp  = self.dht.read()
+            if _humid == -1:
                 time.sleep(self.sleep)
                 pass
             else:
                 """
                 Collecting data and writing to a file
                 """
-                _humid = _dht[0]
-                _temp = _dht[1]
                 _light  = int(self.light.measure_high_res())
-                self.data.append_data(_temp, _light, _humid)
+                self.data.save_average([_temp, _light, _humid])
                 time.sleep(self.sleep)
 
     def terminate(self, is_running):
