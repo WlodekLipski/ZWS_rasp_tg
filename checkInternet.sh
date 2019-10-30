@@ -1,10 +1,9 @@
 #!/bin/bash
 ping -q -w 1 -c 1 `ip r | grep default | cut -d ' ' -f 3` > /dev/null 
 if [ $? -eq 0 ]; then
-   #sudo systemctl stop hostapd.service
-   #sudo systemctl stop dnsmasq.service
    sudo iptables --flush
    sudo sysctl net.ipv4.ip_forward=0
+   python3 ./Web_app/app.py &
 else
    systemctl start hostapd
    sleep 1
