@@ -3,7 +3,7 @@
 \usepackage{geometry}[top=2cm, left = 2.5 cm, right = 2.5cm]
 \usepackage{graphicx}
 \usepackage{float}
-\graphicspath{{./images/} }
+\usepackage{listings}
 \title{
 	\textbf{Zastosowanie systemów wbudowanych}\\
 	\textit{Raspberry Pi - Telegram Bot i web-aplikacja dla śledzenia klimatu otoczenia}
@@ -53,107 +53,125 @@
 	Dodatkowo dany zbiór danych zostanie wykorzystany przez \textit{Telegram bot}
 	w celu powiadomienia użytkownika o aktualnych danych.
 
-\section{Implementacja}
-    \subsection{Pobór danych za pomocą czujników}
-    \subsection{Podłączenie do sieci Internet}
-    \subsection{Komunikacja z Telegram botem}
-    \subsection{Aplikacja internetowa}
+\section{Implementacja asynchronicznego wyświetlania wyników pomiarowych}
 
-    \subsubsection{Cel aplikacji internetowej}
-        Celem aplikacji internetowej jest wizualizacja danych, pobranych za pomocą czujników platformy Raspberry Pi. Dane są wyświetlane za pomocą wykresów, a mianowicie histogramów. Wykresy pokazują jak często występuje każdy z zadanych zakresów temperatury, natężenia światła albo wilgotności. Wykresy w przeglądarce muszą być odświeżone asynchronicznie od razu po zmianie pliku, które te dane przechowuje.
-        
+    \subsection{Cel aplikacji internetowej}
+        Celem aplikacji internetowej jest wizualizacja danych, pobranych za pomocą czujników podłączonych do platformy Raspberry Pi.
+	Dane są wyświetlane za pomocą histogramów. Wykresy pokazują jak często występuje każdy z zadanych zakresów temperatury, natężenia światła i wilgotności. 
+	Wykresy w przeglądarce muszą się odświeżać asynchronicznie po zmianie pliku z danymi.
         \begin{figure}[H]
             \centering
-            \includegraphics[scale=0.4]{exampleChart}
+            \includegraphics[scale=0.3]{exampleChart.png}
             \caption{Histogram temperatury}
         \end{figure}
         
-        \subsubsection{Wybór platformy web-serwera}
-        Aplikacja internetowa jest stworzona za pomocą frameworku Flask. Flask - framework do tworzenia aplikacji internetowych w języku Python, należący do kategorii tak zwanych mikroframeworkow - minimalistycznych ram aplikacji internetowych, które celowo zapewniają tylko najbardziej podstawowe funkcje.
-        
-        Zaletami frameworku sa:
-        \begin{enumerate}
-            \item Elastyczność
-            \item Minimalistyczność bez straty mocy
-            \item Prosty w nauce i obsłudze
-            \item Łatwe rutowanie adresów URL
-            \item Łatwa rozszerzalność
-        \end{enumerate}
-    
-    \subsubsection{Generowanie wykresów w przeglądarce}
-    
-        Dla utworzenia wykresów w przeglądarce używana jest biblioteka Plotly, napisana w języku JavaScript. Biblioteka pozwala na utworzenie wykresu wybranego typu, który dla danej aplikacji jest typem 'bar', odpowiadającym histogramowi. Dane dla wykresów są przekazywane od serwera do przeglądarki jako odpowiedz na żądanie HTTP.
-        
-        Funkcja do utworzenia wykresu przyjmuje jako parametr "id" elementu z tagiem "div", w którym będzie się znajdować dany wykres.
-        
-        \begin{figure}[H]
-            \centering
-            \includegraphics{images/plotlyExample.png}
-            \caption{Funkcja do tworzenia histogramu za pomocą biblioteki Plotly.js}
-        \end{figure}
-        
-        Dane z serwera są przekazywane w postaci tablicy. Dodatkowym zadaniem skryptu w języku JavaScript jest kategoryzowanie (rozrzucenie) danych dla różnych zakresow, zanim wykres będzie stworzony.
-        
-        Wartości dla osi X są nazwami zakresów, do których może należeć wartość przekazana z serwera. Dane zakresy są zdefiniowane są statyczne i zadeklarowane na samym początku skryptu.
-        
-        \begin{figure}[H]
-            \centering
-            \includegraphics[scale=0.9]{images/chartRanges.png}
-            \caption{Zdefiniowany zakresy w skrypcie JavaScript}
-        \end{figure}
-    
-    \subsubsection{Asynchroniczne wczytywanie danych z pliku}
-    
-        Dane, pobrane z czujników za pomocą platformy Raspberry Pi, są przechowywane w pliku z rozszerzeniem ".csv". Dla asynchronicznego wczytywania danych z pliku używana jest biblioteka "watchdog", napisana w języku Python.
-        
-        Celem biblioteki jest monitorowanie wybranych plików. Wybór plików odbywa się za pomocą wyrażeń regularnych. Jeżeli jakiś z monitorowanych plików zostaje zmieniony, to do serwera jest wysyłany sygnał. Do obsługi różnego rodzaju sygnałów używana jest biblioteka "flask\_socketio".
-        
-        Dla każdego sygnału mogą być zdefiniowane osobne funkcje. Na przykład jeżeli monitorowany plik został zmieniony i zapisany, to do serwera zostaje wysłany sygnał, który wywołuje funkcje "on\_modified", która była zdefiniowana dla śledzenia danego sygnału.
-        
-        Po otrzymaniu sygnalu funkcja "on\_modified" linijka po linijce wczytuje dane z pliku dlatego, żeby te dane wysłać do przeglądarki.
-        
-        Monitorowanie pliku jest osobna funkcja i to monitorowanie musi się odbywać w osobnym wątku, żeby nie blokować aplikacji.
-        
-        \begin{figure}[H]
-            \centering
-            \includegraphics{images/csvWatcher.png}
-            \caption{Początek wątku, monitorującego zmianę w pliku}
-        \end{figure}
-    
-    \begin{figure}[H]
-        \centering
-        \includegraphics{images/csvWatcher2.png}
-        \caption{Funkcja reagująca na sygnał po zmianie pliku}
-        \label{fig:mesh1}
-    \end{figure}
-    
-    \subsubsection{Asynchroniczne odświeżanie wykresów w przeglądarce}
-        
-        Język JavaScript również pozwala na zdefiniowanie socket'ów. Celem socketów jest asynchroniczna obsługa sygnałów, wysłanych z serwera.
-        
-        Jak jest pokazane na rysunku \ref{fig:mesh1}, po zmianie pliku serwer wywołuje funkcje "on\_modified", która wczytuje plik i wysyła sygnał z wczytanymi danymi do przeglądarki.
-        Po otrzymaniu sygnału skrypt JavaScript odświeża wykresy w przeglądarce.
-        
-        \begin{figure}[H]
-            \centering
-            \includegraphics{images/socketInJs.png}
-            \caption{Funkcja odświeżająca wykresy po otrzymaniu sygnału z serwera}
-        \end{figure}
-        
-    \subsubsection{Dostęp do aplikacji w sieci prywatnej}
+        \subsection{Wybór platformy web-serwera}
+	Aplikacja internetowa została stworzona za pomocą \textsl{frameworku} \texttt{Flask}. 
+	\texttt{Flask} - \textsl{framework} do tworzenia aplikacji internetowych w języku \texttt{Python}, głównie do
+	minimalistycznych aplikacji, które celowo zapewniają tylko podstawowe funkcje.
+	
+    \subsection{Generowanie wykresów w przeglądarce}
+	Dla utworzenia wykresów w przeglądarce używana jest biblioteka \texttt{Plotly}, napisana w języku \texttt{JavaScript}.
+	Biblioteka pozwala na utworzenie różnorodnych wykresów, z których dla danej aplikacji jest typem \textsl{bar}, odpowiadającym histogramowi. 
+	Dane dla wykresów są przekazywane od serwera do przeglądarki jako odpowiedz na żądanie \texttt{HTTP}.
 
-        Dla uruchamiania aplikacji ktora będzie dostępna w sieci prywatnej, potrzebne jest odpowiednie ustawienie parametru "host". Jeżeli parametr "host" będzie ustawiony na "0.0.0.0", to aplikacja będzie dostępna pod adresem, którym jest zewnętrzny adres IP. Adres IP można sprawdzić na przykład na stronie https://www.myip.com/.
-        
-        \begin{figure}[H]
-            \centering
-            \includegraphics{images/myipaddress.png}
-            \caption{Adres IP na stronie https://www.myip.com/}
-        \end{figure}
-        
-        \begin{figure}[H]
-            \centering
-            \includegraphics[scale=0.7]{images/runningApp.png}
-            \caption{Uruchomiona aplikacja pod zewnętrznym adresem IP}
-        \end{figure}
-        
+	Żądanie jest obsługiwane w języku \texttt{JavaScript} za pomocą ciągu funkcji, które zostały omówione w dalszej części dokumentacji.
+
+    \subsection{Tworzenie wykresu}
+    \begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small,
+    caption={Funkcja do tworzenia histogramu za pomocą biblioteki \textsl{Plotly.js}}]
+function drawChart(chart_divId, chart_title) {
+  var trace = {
+    type: 'bar',
+    x: chartRanges[chart_title],
+    y: chartData[chart_title],
+  };
+
+  var data = [ trace ];
+
+  chart_title = chart_title.charAt(0).toUpperCase()+chart_title.slice(1);
+  var layout = {
+    title: chart_title,
+    font: {size: 18}
+  };
+
+  Plotly.react(chart_divId, data, layout);
+}
+    \end{lstlisting}
+
+    Dane z serwera są przekazywane w postaci tablicy. 
+    Dodatkowym zadaniem skryptu w języku \texttt{JavaScript} jest kategoryzowanie danych
+    dla różnych zakresów, zanim wykres będzie stworzony.
+
+    Wartości dla osi \texttt{x} są nazwami zakresów, 
+    do których może należeć wartość przekazana z serwera. 
+    Dane zakresy są zdefiniowane statyczne i zadeklarowane na samym początku skryptu.
+    \begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small,
+caption={Zdefiniowany zakresy w skrypcie \texttt{JavaScript}}]
+chartRanges = {
+  "temperature" :
+	     ["16 or lower", "17-19", "20-22", "23-25", "26 or higher"],
+  "light": 
+       ["349 or lower","350-450", "451-550", "551-650", "651 or higher"],
+  "humidity":
+	  ["0-20", "21-40", "41-60", "61-80", "81-100"]
+}
+    \end{lstlisting}
+
+\subsection{Asynchroniczne wczytywanie danych z pliku}
+    Dane, pobrane z czujników za pomocą platformy \textit{Raspberry Pi}, są przechowywane w pliku z rozszerzeniem \texttt{.csv}.
+    Dla asynchronicznego wczytywania danych z pliku została użyta moduł \texttt{watchdog}.
+    Dany moduł został użyty do monitorowanie wybranych plików. 
+    Wybór plików został zdefiniowany za pomocą wyrażeń regularnych. 
+    Jeżeli dowolny plik o zadanym rozszerzeniu zostaje zmieniony, to do serwera jest wysyłany sygnał.
+    Do obsługi różnego rodzaju sygnałów jest używany moduł \texttt{flask\_socketio}.
+    \begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small, language=python,
+    caption={Połączenie gniazdka na serwerze z gniazdkiem w przeglądrce}]
+@socketio.on('connect')
+def test_connect():
+global thread
+if thread is None:
+  thread = socketio.start_background_task(target=background_thread)
+    \end{lstlisting}
+
+    Dla każdego sygnału mogą być zdefiniowane osobne funkcje. 
+    W danej implementacji sygnał zostaje wysłany 
+    jeżeli monitorowany plik został zmieniony, to serwer wysyła sygnał
+    do przeglądarki za pomocą funkcji \texttt{on\_modified}, która dodatkowo
+    wczytuje dane z pliku, żeby przekazać do przeglądarki.
+   \begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small, language=python,
+    caption={Definicja wątku, monitorującego zmiany w plikach o zadanych rozszerzeniu}]
+def background_thread():
+  global observer
+  event_handler = CsvWatcher()
+  observer = Observer()
+  observer.schedule(event_handler, './', recursive=True)
+  observer.start()
+   \end{lstlisting}
+
+\begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small, language=python,
+    caption={Definicja funkcji wysyłającej sygnał i dane}]
+def on_modified(self,event):
+    global csvFileName
+    data = readfile(csvFileName)
+    socketio.emit('modified', {'data': data})
+   \end{lstlisting}
+
+    \subsection{Asynchroniczne odświeżanie wykresów w przeglądarce}
+    Asynchroniczne odświeżanie wykresów umożliwia połączenie przeglądarki i serwera za pomocą gniazdek.
+    Celem gniazdek jest asynchroniczna obsługa sygnałów, wysłanych z serwera.
+    
+    Do obsługi sygnału w języku \texttt{JavaScript} zostały zdefiniowane następujące funkcję:
+\begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small,
+    caption={Połączenie gniazdek w przeglądrce z serwerem i odebranie danych}]
+var socket = io.connect('http://'+document.domain+':'+location.port);
+
+socket.on('modified', function(data) {
+    var newData = data['data'];
+    start(newData)
+});
+\end{lstlisting}
+    \subsection{Dostęp do aplikacji w sieci prywatnej}
+    Aplikacja jest uruchomiana po połączeniu \textit{Raspberry Pi} z siecią.
+    \texttt{IP} urządzenia zostanie wysłany do zdefiniowanego \texttt{Telegram Bot'u}.
 \end{document}
