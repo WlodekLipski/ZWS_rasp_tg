@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+### BEGIN INIT INFO
+# Provides:          chechInet
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Should-Start: 
+# Should-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Starting script as 'pi' user 
+# Description:
+### END INIT INFO
+su pi /home/pi/ZWS_rasp_tg/start.sh

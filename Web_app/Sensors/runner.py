@@ -24,16 +24,16 @@ class Runner():
                 self.sleep = int(_sleep)
                 """
                 Sleep timeout might
-                be in range 1 to 3600
+                be in range 60 to 3600
                 """
-                if (self.sleep < 1 or
+                if (self.sleep < 60 or
                         self.sleep > 3600):
-                    self.sleep = 1
+                    self.sleep = 60
 
             except ValueError:
-                self.sleep = 0xff
+                self.sleep = 60
         else:
-            self.set_sleep(0xff)
+            self.set_sleep(60)
 
 
     def get_sleep(self):
@@ -44,7 +44,6 @@ class Runner():
             _humid, _temp  = self.dht.read()
             if _humid == -1:
                 time.sleep(self.sleep)
-                pass
             else:
                 """
                 Collecting data and writing to a file

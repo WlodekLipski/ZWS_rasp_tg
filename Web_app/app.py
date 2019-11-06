@@ -63,7 +63,7 @@ def readfile(path):
 
 if __name__ == '__main__':
     _sensors = sensors_data.Sensors()
-    print(_sensors.reset_sensors())
+    _sensors.reset_sensors(60)
     socketio.run(app, host='0.0.0.0', debug=True)
     if observer is not None:
         observer.stop()
