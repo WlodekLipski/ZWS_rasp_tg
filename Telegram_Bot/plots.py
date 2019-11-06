@@ -18,6 +18,7 @@ def create_plot(column_name, tail_size=10):
         data = dict(zip(unique, counts)) 
         plt.bar(range(len(data)), list(data.values()), align='center')
         plt.xticks(range(len(data)), list(data.keys()))
-        plt.savefig(column_name+'.jpeg')
+        file_name = column_name+'.png'
+        plt.savefig(file_name)
         plt.cla()
-        return 0
+        return file_name

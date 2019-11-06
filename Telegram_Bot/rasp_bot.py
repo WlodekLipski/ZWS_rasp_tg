@@ -3,6 +3,7 @@ from telegram.ext import RegexHandler
 from pandas import read_csv
 import numpy as np
 import re
+from plots import create_plot
 
 token = None
 with open('config','r') as fd:
@@ -17,23 +18,21 @@ def rasp_hello(update, context):
         'Hello {}. I am ready for start'.format(update.message.from_user.first_name))
     
 def rasp_pic(update, context):
-    picture_type = context.args[0]
-    if (picture_type is not None and
-                picture_type in VALID_ARGS_LIST):
-        try:
-            amount = int(context.args[1])
-            """
-            Hook to a picture generator with size
-            """
-            update.message.reply_text('ONLY PICTURE with custom size*')
-        except ValueError:
-            """
-            Hook to a picture generator
-            """
-            #print(TRUE_ARGS[context.args[0]])
-            update.message.reply_text('ONLY PICTURE with standard size')
-        else:
-            update.message.reply_text('Invalid args')
+    picture_size = None
+    picture_type = None
+    if len(context.args) > 1:
+        picture_type = context.args[0]
+        picture_size = int(context.args[1])
+        file_name = create_plot(TRUE_ARGS[picture_type], picture_size)
+        context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(file_name, 'rb'))
+
+    elif len(context.args) == 1:
+        picture_type = context.args[0]
+        file_name = create_plot(TRUE_ARGS[picture_type])
+        context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(file_name, 'rb'))
+
+    else:
+        update.message.reply_text('Invalid args')
 
 def rasp_tail(update, context):
     tail_size = 10

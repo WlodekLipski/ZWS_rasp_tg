@@ -9,20 +9,17 @@ class Sensors():
     """
     def __init__(self):
         self.thread = None
-        self.runner = runner.Runner(5)
-        print('Runner type',self.runner)
+        self.runner = runner.Runner(60)
         self.is_running = threading.Event()
 
-    def reset_sensors(self, _sleep=5):
+    def reset_sensors(self, _sleep=60):
         """
         Funciton initialize the thread
         which will collect data from sensors
         based on provieded 'sleep' timeout
-        Timeout = [1,3600]
+        Timeout = [60,3600]
         """
-
         # integer division
-        _sleep //= 2
         if self.thread is None:
             self.is_running.clear()
             self.runner.set_sleep(_sleep)
