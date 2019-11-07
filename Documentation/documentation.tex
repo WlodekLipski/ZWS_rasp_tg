@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{listings}
+\usepackage{newclude}
 \title{
 	\textbf{Zastosowanie systemów wbudowanych}\\
 	\textit{Raspberry Pi - Telegram Bot i web-aplikacja dla śledzenia klimatu otoczenia}
@@ -170,8 +171,10 @@ socket.on('modified', function(data) {
     var newData = data['data'];
     start(newData)
 });
+
 \end{lstlisting}
-    \subsection{Dostęp do aplikacji w sieci prywatnej}
-    Aplikacja jest uruchomiana po połączeniu \textit{Raspberry Pi} z siecią.
-    \texttt{IP} urządzenia zostanie wysłany do zdefiniowanego \texttt{Telegram Bot'u}.
+\include*{telegram}
+\include*{sensors}
+
 \end{document}
+

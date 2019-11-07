@@ -1,0 +1,72 @@
+\section{Telegram Bot}
+\textsl{Telegram Bot} jest aplikacją bazującą się na 
+\texttt{API}\footnote{od ang. Application Programming Interface -- programistyczny interfejs aplikacji} 
+udostępnionego przez \texttt{Telegram} w celu tworzenia \texttt{Bot'a} -- aplikacji odpowiadającej
+na określone żądania użytkownika w określony sposób. Jest to pewien rodzaj usługi, którą możemy 
+stworzyć i wdrożyć w danym messengerze.
+
+Uługą danego projektu jest udostępnianie wyników pomiarowych, które są zbierane
+przez niezależną aplikację, działającą na platformie \texttt{Raspberry Pi 3B+}.
+
+Proces tworzenia \texttt{Bot'a} jest opisany na stronie -- \texttt{https://core.telegram.org/bots}
+
+W danej implementacji \texttt{Bot'a} zostały zrealizowane następujące funkcjonalności:
+\begin{itemize}
+
+\item Wgląd do wyników pomiarowych -- odczyt ostatnich danych pomimarowych:
+Użytkownik posiada możliwość zdefiniowania ilości ostatnich wyników pomiarowych.
+\begin{lstlisting}[frame=single, basicstyle=\ttfamily\small, language=python,
+caption={Komedna do pobierania określonej ilości ostatnich wyników pomiarowych}]
+/tail <size>
+\end{lstlisting}
+gdzie \texttt{<size>} określa ilość pomiarów.
+\begin{lstlisting}[frame=single, basicstyle=\ttfamily\small, language=python,
+caption={Odpowiedź na wprowadzoną komendę -- \texttt{/tail}}]
+def rasp_tail(update, context):
+    tail_size = 10
+    if len(context.args) != 0:
+        tail_size = int(context.args[0])
+
+    if tail_size < 0:
+        tail_size *= -1
+    data = read_csv('data.csv').tail(tail_size)
+    for name in TRUE_ARGS.values():
+        msg = name
+	      +':\n'
+	      +re.sub(' {2,}',' ',
+		      data.loc[:,name].to_string(index=False))
+        update.message.reply_text(msg)
+
+\end{lstlisting}
+\newpage
+
+\item Przeglądanie wyników pomiarowych w postaci graficznej -- wykresy typu \textsl{histogram}:
+Użytkownik posiada możliwość wyboru typu danych pomiarowych.
+\begin{lstlisting}[frame=single, basicstyle=\ttfamily\small, language=python,
+caption={Komedna do pobierania wyników określonego typu, w postaci graficznej}]
+/pic <type>
+\end{lstlisting}
+    gdzie \texttt{<type>} określa jeden z możliwych typów pomiarowych: 
+
+    \texttt{temp, humid, light} -- \texttt{temperatura, wilgotność, natężenie światła}.
+
+\begin{lstlisting}[frame=single, basicstyle=\ttfamily\small, language=python,
+caption={Odpowiedź na wprowadzoną komendę -- \texttt{/pic}}]
+def rasp_pic(update, context):
+    picture_size = None
+    picture_type = None
+    if len(context.args) > 1:
+        picture_type = context.args[0]
+        picture_size = int(context.args[1])
+        file_name = create_plot(TRUE_ARGS[picture_type], picture_size)
+        context.bot.send_photo(chat_id=update.effective_chat.id,
+			       photo=open(file_name, 'rb'))
+    elif len(context.args) == 1:
+        picture_type = context.args[0]
+        file_name = create_plot(TRUE_ARGS[picture_type])
+        context.bot.send_photo(chat_id=update.effective_chat.id,
+			       photo=open(file_name, 'rb'))
+    else:
+        update.message.reply_text('Invalid args')
+\end{lstlisting}
+\end{itemize}

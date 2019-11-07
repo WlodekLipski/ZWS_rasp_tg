@@ -1,0 +1,25 @@
+\section{Generowanie i przechowywanie danych}
+Generowanie danych jest oparte o informacje uzyskiwaną z 
+czujników pomiarowych:
+\begin{itemize}
+  \item \texttt{DHT11} - czujnik temperatury i wilgotności,
+  \item \texttt{BHT1750} - czujnik natężenia światła.
+\end{itemize}
+Zakresy pomiarowe czujniku \texttt{DHT11} stanowią pewne ograniczenie
+na jego zastosowanie:
+\begin{itemize}
+  \item Temeperatura -- [0,50] $\pm 2^\circ$ o rozdzielczości $1^\circ$,
+  \item wilgotność -- [20,90]\% \texttt{RH} - wilgotność względna. 
+    Jest to stosunek rzeczywistej wilgoci w powietrzu do maksymalnej jej ilości, 
+    którą może utrzymać powietrze w danej temperaturze.
+    Rozdzielczość -- $1\%$.
+\end{itemize}
+Z powodu powyższych ograniczeń, dany czujnik można stosować w warunkach, które
+nie wymagają większej precyzji, na przykład -- pomieszczenia biurowe.
+
+Czujnik natężenia światła posiada szeroki zakres pomiarowy -- $[1,65535] lx$,
+z rozdzielczością 1 lub 4 $lx$ w zależności od wybranego trybu pracy. 
+W danej implementacji została wybrana rozdzielczość w 1 $lx$.
+
+\subsection{Przechowywanie danych}
+\subsection{Podłączenie czujników}
