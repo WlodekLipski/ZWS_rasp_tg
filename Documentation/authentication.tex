@@ -1,0 +1,28 @@
+\section{Łączenie z siecią \texttt{WiFi}}
+W celu połączenia z siecią użytkownika \texttt{WiFi} o standardzie 
+\texttt{WPA} lub \texttt{WPA2} została napisana aplikacja,
+która pobiera dane sieci:
+\begin{itemize}
+  \item SSID\footnote{od ang. Service set identifier - identyfikator sieci},
+  \item hasło.
+\end{itemize}
+które zostają przekazane do aplikacji:
+\begin{itemize}
+  \item \texttt{wpa\_passphrase} -- generowanie klucza dla połączenia,
+  \item \texttt{wpa\_supplicant} -- w celu połączenia z siecią za pomocą
+    klucza i \texttt{SSID}
+\end{itemize}
+\begin{lstlisting}[frame=single, basicstyle=\ttfamily\small, language=python,
+caption={Pobieranie danych z form za pomocą metody \texttt{POST}}]
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        subprocess.Popen(['./switch_network.sh %s %s' % (request.form['ssid'],
+			 request.form['password'])], shell=True)
+        return render_template('index.html')
+    else:
+        return render_template('index.html')
+\end{lstlisting}
+
+
+

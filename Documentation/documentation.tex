@@ -1,10 +1,11 @@
 \documentclass[a4paper]{article}
 \usepackage{polski}
-\usepackage{geometry}[top=2cm, left = 2.5 cm, right = 2.5cm]
+\usepackage{geometry}[top=1cm, left = 2.5 cm, right = 2.5cm]
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{listings}
 \usepackage{newclude}
+\usepackage{hyperref}
 \title{
 	\textbf{Zastosowanie systemów wbudowanych}\\
 	\textit{Raspberry Pi - Telegram Bot i web-aplikacja dla śledzenia klimatu otoczenia}
@@ -17,7 +18,7 @@
 	\begin{tabular}{rl}
 		Autorzy & \\
 			\hline
-		Kostiukov Oleksii 	& 231972\\
+		Oleksii Kostiukov  	& 231972\\
 		Uladzimir Lipski	& 238961\\
 		Vikatr Hasiul 		& 231862\\[0.4cm]
 			\hline
@@ -40,7 +41,7 @@
 	w celu komunikacji z wybranymi użytkownikami (którzy posiadają możliwość komunikacji ze stworzonym
 	\textit{bot'em}).
 
-	\paragraph{Punkt pomiarowy.} Platforma \textit{Raspberry} umożliwia podłączenie licznych
+	\paragraph{Punkt pomiarowy} Platforma \textit{Raspberry} umożliwia podłączenie licznych
 	czujników, dane z których można gromadzić na urządzeniu lub wysyłać do serwerów zdalnych.
 	W danym projekcie zostaną podłączone czujniki:
 	\begin{enumerate}
@@ -175,6 +176,8 @@ socket.on('modified', function(data) {
 \end{lstlisting}
 \include*{telegram}
 \include*{sensors}
-
+\include*{auth}
+\include*{raspbian}
+\include*{summary}
 \end{document}
 
