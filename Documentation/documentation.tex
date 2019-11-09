@@ -33,6 +33,8 @@
 
 \maketitle
 \newpage
+\tableofcontents
+\newpage
 \section{Cel projektu}
 	Celem danego projektu jest wykorzystanie platformy \textit{Raspberry} 
 	do realizacji \textit{Telegram bot'u} oraz punktu pomiarowego.
@@ -122,10 +124,11 @@ chartRanges = {
 
 \subsection{Asynchroniczne wczytywanie danych z pliku}
     Dane, pobrane z czujników za pomocą platformy \textit{Raspberry Pi}, są przechowywane w pliku z rozszerzeniem \texttt{.csv}.
-    Dla asynchronicznego wczytywania danych z pliku została użyta moduł \texttt{watchdog}.
-    Dany moduł został użyty do monitorowanie wybranych plików. 
+    Dla asynchronicznego wczytywania danych z pliku została użyty moduł \texttt{watchdog}.
+    Dany moduł został użyty do monitorowania wybranych plików. 
     Wybór plików został zdefiniowany za pomocą wyrażeń regularnych. 
-    Jeżeli dowolny plik o zadanym rozszerzeniu zostaje zmieniony, to do serwera jest wysyłany sygnał.
+    Jeżeli dowolny plik o zadanym rozszerzeniu zostaje zmieniony, to serwer wysyła sygnał do przeglądarki,
+    która została połączona z serwerem za pomocą gniazdek i nasłuchuje na te sygnały.
     Do obsługi różnego rodzaju sygnałów jest używany moduł \texttt{flask\_socketio}.
     \begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small, language=python,
     caption={Połączenie gniazdka na serwerze z gniazdkiem w przeglądrce}]
@@ -140,7 +143,7 @@ if thread is None:
     W danej implementacji sygnał zostaje wysłany 
     jeżeli monitorowany plik został zmieniony, to serwer wysyła sygnał
     do przeglądarki za pomocą funkcji \texttt{on\_modified}, która dodatkowo
-    wczytuje dane z pliku, żeby przekazać do przeglądarki.
+    wczytuje dane z pliku, żeby przekazać ich do przeglądarki.
    \begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small, language=python,
     caption={Definicja wątku, monitorującego zmiany w plikach o zadanych rozszerzeniu}]
 def background_thread():
