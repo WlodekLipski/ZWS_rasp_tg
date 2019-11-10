@@ -1,0 +1,61 @@
+\section{Uruchomienie w środowisku \textsl{Raspbian}}
+Algorytm działania całego systemu jest następujący:
+\begin{enumerate}
+  \item Sprawdzenie zawartości konfiguracji \texttt{WiFi},
+  \item jeżeli istnieje wpis o określonym \texttt{SSID}	
+    następuje połączenie z nim,
+  \item jeżeli nie został przydzielony address \texttt{IP} (sieć nie jest aktywna)
+    następuje uruchomienie własnego \texttt{AP}
+    \footnote{od ang. Access Point -- punkt dostępu 
+    do sieci (w danym przypadku \texttt{WiFi})} oraz
+    aplikacji konfiguracyjnej,
+  \item jeżeli adres został przydzielony -- uruchomienie \texttt{Telegram Bot'u},
+    aplikacji pomiarowej oraz aplikacji \texttt{WEB} wyświetlającej dane.
+\end{enumerate}
+
+Powyższy algorytm został napisany w języku \texttt{Bash}.
+\begin{lstlisting}[basicstyle=\ttfamily\small, language=bash, frame=single,
+  caption={Uruchomienie procesów w systemie \textsl{Raspbian}}]
+#!/bin/sh
+working_dir="/home/pi/ZWS_rasp_tg/"
+sudo service wpa_supplicant restart
+sudo wpa_supplicant -D wext -i wlan0 \
+  -c /etc/wpa_supplicant/wpa_supplicant.conf -B
+WPA_PID=$!
+sleep 2
+sudo dhclient -1
+if [ $? -eq 0 ]
+then
+	echo "Connected"
+	cd $working_dir && python3 ./Telegram_Bot/rasp_bot.py &
+	cd $working_dir && python3 ./Web_app/app.py &
+else
+	echo "No internet"
+	sudo kill $WPA_PID
+	sudo service wpa_supplicant stop
+	sudo iptables-restore /etc/iptables.ipv4.nat
+	sudo ifup wlan0
+	sudo service hostapd start
+	sudo service dnsmasq start
+	cd $working_dir && python ./network_auth/app.py
+fi
+\end{lstlisting}
+W celu uruchomienia danego skryptu podczas startu sytemu bez
+konieczności ręcznego wywołania, został napisany \texttt{service}:
+\begin{lstlisting}[basicstyle=\ttfamily\small, language=bash, frame=single,
+  caption={\texttt{service} wywołujący skrypt}]
+#!/bin/sh
+#
+### BEGIN INIT INFO
+# Provides:          checkInet
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Should-Start: 
+# Should-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Starting script as 'pi' user 
+# Description:
+### END INIT INFO
+su pi /home/pi/ZWS_rasp_tg/start.sh
+\end{lstlisting}

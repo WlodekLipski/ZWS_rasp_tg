@@ -1,9 +1,11 @@
 \documentclass[a4paper]{article}
 \usepackage{polski}
-\usepackage{geometry}[top=2cm, left = 2.5 cm, right = 2.5cm]
+\usepackage{geometry}[top=1cm, left = 2.5 cm, right = 2.5cm]
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{listings}
+\usepackage{newclude}
+\usepackage{hyperref}
 \title{
 	\textbf{Zastosowanie systemów wbudowanych}\\
 	\textit{Raspberry Pi - Telegram Bot i web-aplikacja dla śledzenia klimatu otoczenia}
@@ -16,7 +18,7 @@
 	\begin{tabular}{rl}
 		Autorzy & \\
 			\hline
-		Kostiukov Oleksii 	& 231972\\
+		Oleksii Kostiukov  	& 231972\\
 		Uladzimir Lipski	& 238961\\
 		Vikatr Hasiul 		& 231862\\[0.4cm]
 			\hline
@@ -31,6 +33,8 @@
 
 \maketitle
 \newpage
+\tableofcontents
+\newpage
 \section{Cel projektu}
 	Celem danego projektu jest wykorzystanie platformy \textit{Raspberry} 
 	do realizacji \textit{Telegram bot'u} oraz punktu pomiarowego.
@@ -39,7 +43,7 @@
 	w celu komunikacji z wybranymi użytkownikami (którzy posiadają możliwość komunikacji ze stworzonym
 	\textit{bot'em}).
 
-	\paragraph{Punkt pomiarowy.} Platforma \textit{Raspberry} umożliwia podłączenie licznych
+	\paragraph{Punkt pomiarowy} Platforma \textit{Raspberry} umożliwia podłączenie licznych
 	czujników, dane z których można gromadzić na urządzeniu lub wysyłać do serwerów zdalnych.
 	W danym projekcie zostaną podłączone czujniki:
 	\begin{enumerate}
@@ -120,10 +124,11 @@ chartRanges = {
 
 \subsection{Asynchroniczne wczytywanie danych z pliku}
     Dane, pobrane z czujników za pomocą platformy \textit{Raspberry Pi}, są przechowywane w pliku z rozszerzeniem \texttt{.csv}.
-    Dla asynchronicznego wczytywania danych z pliku została użyta moduł \texttt{watchdog}.
-    Dany moduł został użyty do monitorowanie wybranych plików. 
+    Dla asynchronicznego wczytywania danych z pliku została użyty moduł \texttt{watchdog}.
+    Dany moduł został użyty do monitorowania wybranych plików. 
     Wybór plików został zdefiniowany za pomocą wyrażeń regularnych. 
-    Jeżeli dowolny plik o zadanym rozszerzeniu zostaje zmieniony, to do serwera jest wysyłany sygnał.
+    Jeżeli dowolny plik o zadanym rozszerzeniu zostaje zmieniony, to serwer wysyła sygnał do przeglądarki,
+    która została połączona z serwerem za pomocą gniazdek i nasłuchuje na te sygnały.
     Do obsługi różnego rodzaju sygnałów jest używany moduł \texttt{flask\_socketio}.
     \begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small, language=python,
     caption={Połączenie gniazdka na serwerze z gniazdkiem w przeglądrce}]
@@ -136,11 +141,11 @@ if thread is None:
 
     Dla każdego sygnału mogą być zdefiniowane osobne funkcje. 
     W danej implementacji sygnał zostaje wysłany 
-    jeżeli monitorowany plik został zmieniony, to serwer wysyła sygnał
+    jeżeli monitorowany plik został zmieniony. W tym przypadku serwer wysyła sygnał
     do przeglądarki za pomocą funkcji \texttt{on\_modified}, która dodatkowo
-    wczytuje dane z pliku, żeby przekazać do przeglądarki.
+    wczytuje dane z pliku, żeby przekazać je do przeglądarki.
    \begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small, language=python,
-    caption={Definicja wątku, monitorującego zmiany w plikach o zadanych rozszerzeniu}]
+    caption={Definicja wątku, monitorującego zmiany w plikach o zadanym rozszerzeniu}]
 def background_thread():
   global observer
   event_handler = CsvWatcher()
@@ -159,7 +164,7 @@ def on_modified(self,event):
 
     \subsection{Asynchroniczne odświeżanie wykresów w przeglądarce}
     Asynchroniczne odświeżanie wykresów umożliwia połączenie przeglądarki i serwera za pomocą gniazdek.
-    Celem gniazdek jest asynchroniczna obsługa sygnałów, wysłanych z serwera.
+    Gniazdka umozliwiają asynchroniczną obsługę sygnałów, wysłanych z serwera.
     
     Do obsługi sygnału w języku \texttt{JavaScript} zostały zdefiniowane następujące funkcję:
 \begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small,
@@ -170,8 +175,12 @@ socket.on('modified', function(data) {
     var newData = data['data'];
     start(newData)
 });
+
 \end{lstlisting}
-    \subsection{Dostęp do aplikacji w sieci prywatnej}
-    Aplikacja jest uruchomiana po połączeniu \textit{Raspberry Pi} z siecią.
-    \texttt{IP} urządzenia zostanie wysłany do zdefiniowanego \texttt{Telegram Bot'u}.
+\include*{telegram}
+\include*{sensors}
+\include*{auth}
+\include*{raspbian}
+\include*{summary}
 \end{document}
+
