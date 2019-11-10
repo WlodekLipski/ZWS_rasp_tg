@@ -141,11 +141,11 @@ if thread is None:
 
     Dla każdego sygnału mogą być zdefiniowane osobne funkcje. 
     W danej implementacji sygnał zostaje wysłany 
-    jeżeli monitorowany plik został zmieniony, to serwer wysyła sygnał
+    jeżeli monitorowany plik został zmieniony. W tym przypadku serwer wysyła sygnał
     do przeglądarki za pomocą funkcji \texttt{on\_modified}, która dodatkowo
-    wczytuje dane z pliku, żeby przekazać ich do przeglądarki.
+    wczytuje dane z pliku, żeby przekazać je do przeglądarki.
    \begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small, language=python,
-    caption={Definicja wątku, monitorującego zmiany w plikach o zadanych rozszerzeniu}]
+    caption={Definicja wątku, monitorującego zmiany w plikach o zadanym rozszerzeniu}]
 def background_thread():
   global observer
   event_handler = CsvWatcher()
@@ -164,7 +164,7 @@ def on_modified(self,event):
 
     \subsection{Asynchroniczne odświeżanie wykresów w przeglądarce}
     Asynchroniczne odświeżanie wykresów umożliwia połączenie przeglądarki i serwera za pomocą gniazdek.
-    Celem gniazdek jest asynchroniczna obsługa sygnałów, wysłanych z serwera.
+    Gniazdka umozliwiają jest asynchroniczna obsługa sygnałów, wysłanych z serwera.
     
     Do obsługi sygnału w języku \texttt{JavaScript} zostały zdefiniowane następujące funkcję:
 \begin{lstlisting}[frame=single, numbers=left, basicstyle=\ttfamily\small,
