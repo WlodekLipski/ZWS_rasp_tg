@@ -6,68 +6,179 @@
 \usepackage{listings}
 \usepackage{newclude}
 \usepackage{hyperref}
-\title{
-	\textbf{Zastosowanie systemów wbudowanych}\\
-	\textit{Raspberry Pi - Telegram Bot i web-aplikacja dla śledzenia klimatu otoczenia}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Definicja strony tytuіowej 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+%Uczelnia
+\newcommand\uczelnia[1]{\renewcommand\@uczelnia{#1}}
+\newcommand\@uczelnia{}
+%Wydziaі
+\newcommand\wydzial[1]{\renewcommand\@wydzial{#1}}
+\newcommand\@wydzial{}
+%Kierunek
+\newcommand\kierunek[1]{\renewcommand\@kierunek{#1}}
+\newcommand\@kierunek{}
+%Specjalnoњж
+\newcommand\specjalnosc[1]{\renewcommand\@specjalnosc{#1}}
+\newcommand\@specjalnosc{}
+%Tytuі krуtki
+\newcommand\titleShort[1]{\renewcommand\@titleShort{#1}}
+\newcommand\@titleShort{}
+%Promotor
+\newcommand\promotor[1]{\renewcommand\@promotor{#1}}
+\newcommand\@promotor{}
+
+\usepackage[absolute]{textpos} % zamarkowano, bo ostatecznie wykorzystano otoczenie picture
+
+\def\maketitle{%
+  \pagestyle{empty}%
+	\fontfamily{\ebgaramond@family}\selectfont	
+\newlength{\tmpfboxrule}
+\setlength{\tmpfboxrule}{\fboxrule}
+\setlength{\fboxsep}{2mm}
+\setlength{\fboxrule}{0mm} 
+
+
+\setlength{\unitlength}{1mm}
+\begin{picture}(0,0)
+\put(30,-140){\fbox{
+\parbox[c][71mm][c]{104mm}{\centering 
+{\fontsize{20pt}{22pt}\selectfont \@title}\\[18mm]
+{\fontsize{16pt}{18pt}\selectfont AUTORZY:}\\[2mm]
+{\fontsize{14pt}{16pt}\selectfont Viktar Hasiul 231862}\\[4mm]
+{\fontsize{14pt}{16pt}\selectfont Uladzimir Lipski 238961}\\[4mm]
+{\fontsize{14pt}{16pt}\selectfont Oleksii Kostiukov 231972}\\[10mm]
+{\fontsize{16pt}{18pt}\selectfont PROWADZACY:}\\[2mm]
+{\fontsize{14pt}{16pt}\selectfont \@promotor}\\[10mm]}
+}
+}
+\end{picture}
+\setlength{\fboxrule}{\tmpfboxrule} 
+
+	{\centering
+		{\fontsize{22pt}{24pt}\selectfont \@uczelnia}\\[0.4cm]
+		{\fontsize{22pt}{24pt}\selectfont \@wydzial}\\[0.5cm]
+		  \hrule %\vspace*{0.7cm}
 	}
-\date{}
+{\flushleft\fontsize{14pt}{16pt}\selectfont%
+\begin{tabular}{ll}
+Kierunek: & \@kierunek\\
+Specjalność: & \@specjalnosc\\
+\end{tabular}\\[1.3cm]
+}
+{\centering
+{\fontsize{32pt}{36pt}\selectfont Projekt}\\[0.5cm]
+{\fontsize{32pt}{36pt}\selectfont Zastosowanie systemów wbudowanych}\\[5cm]
+}
+\vfill
+\vspace{5cm}
+\hrule\vspace*{0.3cm}
+{\centering
+{\fontsize{16pt}{18pt}\selectfont \@date}\\[0cm]
+}
+%\ungaramond
+\normalfont
+\cleardoublepage
+}
+\makeatother
+\title{Raspberry Pi - Telegram Bot i web-aplikacja dla śledzenia klimatu otoczenia}
+\titleShort{Szablon pracy dyplomowej ...}
+\uczelnia{Politechnika Wrocławska}
+\wydzial{Wydział Elektroniki}
+\kierunek{Informatyka}
+\specjalnosc{Inżynieria Internetowa}
+\promotor{Dr inż. Marek Woda, W4/K9}
+\date{Wrocław, 2019}
+
 
 \begin{document}
-\begin{table}
-	\vspace{-2cm}
-	\begin{tabular}{rl}
-		Autorzy & \\
-			\hline
-		Oleksii Kostiukov  	& 231972\\
-		Uladzimir Lipski	& 238961\\
-		Vikatr Hasiul 		& 231862\\[0.4cm]
-			\hline
-		Prowadzący 	& Dr inż. Marek Woda \\
-		Termin		& Środa, godzina: 13:15\\
-	\end{tabular}
-\end{table}
 
-{\let\newpage\relax\maketitle}
-\maketitle
 \thispagestyle{empty} %no page number for this page
 
 \maketitle
 \newpage
 \tableofcontents
 \newpage
-\section{Cel projektu}
-	Celem danego projektu jest wykorzystanie platformy \textit{Raspberry} 
-	do realizacji \textit{Telegram bot'u} oraz punktu pomiarowego.
+\section{Cel i założenia projektu}
+Celem danego projektu jest wykorzystanie platformy \textit{Raspberry}
+do realizacji \textit{Telegram bot'u} oraz punktu pomiarowego.
 
-	\paragraph{Telegam bot} jest aplikacją wykorzystującą interfejs aplikacji \textit{Telegram}
-	w celu komunikacji z wybranymi użytkownikami (którzy posiadają możliwość komunikacji ze stworzonym
-	\textit{bot'em}).
+Założenia projektu:
+\begin{enumerate}
+\item Platforma musi odzyskiwać dane za pomocą podłączonych czujników
+\item Uzyskane dane są przechowywane na dysku twardym platformy
+\item Platforma musi się podłączać do istniejącej sieci WiFi lub uruchamiać Hotspot
+\item Do wizualizacji pobranych danych służy aplikacja internetowa. Dane są wyświetlane w postaci histogramów
+\item Platforma musi implementować API Telegram bota. Odzyskane przez platformę dane mogą być wysyłane do użytkownika w postaci tekstu albo wykresów.
+\end{enumerate}
 
-	\paragraph{Punkt pomiarowy} Platforma \textit{Raspberry} umożliwia podłączenie licznych
-	czujników, dane z których można gromadzić na urządzeniu lub wysyłać do serwerów zdalnych.
-	W danym projekcie zostaną podłączone czujniki:
-	\begin{enumerate}
-		\item temperatury,
-		\item wilgotności,
-		\item światła
-	\end{enumerate}
-	dane z których będą przechowywane na urządzeniu w celu przetwarzania i 
-	wyświetlania na stronie \textbf{WEB} w postaci interaktywnego wykresu.
-	
-	Dodatkowo dany zbiór danych zostanie wykorzystany przez \textit{Telegram bot}
-	w celu powiadomienia użytkownika o aktualnych danych.
+\section{Spis funkcjonalności}
 
-\section{Implementacja asynchronicznego wyświetlania wyników pomiarowych}
+\subsection{Uzyskanie danych za pomocą czujników}
 
-    \subsection{Cel aplikacji internetowej}
-        Celem aplikacji internetowej jest wizualizacja danych, pobranych za pomocą czujników podłączonych do platformy Raspberry Pi.
-	Dane są wyświetlane za pomocą histogramów. Wykresy pokazują jak często występuje każdy z zadanych zakresów temperatury, natężenia światła i wilgotności. 
-	Wykresy w przeglądarce muszą się odświeżać asynchronicznie po zmianie pliku z danymi.
-        \begin{figure}[H]
-            \centering
-            \includegraphics[scale=0.3]{exampleChart.png}
-            \caption{Histogram temperatury}
-        \end{figure}
+\paragraph{Punkt pomiarowy} Platforma \textit{Raspberry} umożliwia podłączenie licznych
+czujników, dane z których można gromadzić na urządzeniu lub wysyłać do serwerów zdalnych.
+
+dane z których będą przechowywane na urządzeniu w celu przetwarzania i
+wyświetlania na stronie \textbf{WEB} w postaci interaktywnego wykresu.
+
+Dodatkowo dany zbiór danych zostanie wykorzystany przez \textit{Telegram bot}
+w celu powiadomienia użytkownika o aktualnych danych.
+
+Platforma RaspberryPi pozwala uzyskiwać dane na temat klimatu pokoju, w którym platforma się znajduje, za pomocą czujników. W danym projekcie zostały podłączone czujniki:
+\begin{enumerate}
+\item temperatury,
+\item wilgotności,
+\item światła
+\end{enumerate}
+
+Dane zostają pobrane raz na 1 minute.
+
+\subsection{Gromadzenie danych}
+
+Uzyskane dane są gromadzone w pamięci platformy RaspberryPi. Dane są zapisywane do pliku z rozszerzeniem \textit{csv}, w którym za każdy parametr odpowiada osobna kolumna.
+\newline Zapis danych do pliku jest potrzebny w celu wizualizacji danych w aplikacji internetowej i generowania odpowiedzi na zapytanie Telegram botu.
+
+\subsection{Podłączenie RPI do sieci WiFi}
+
+W celu uruchomienia aplikacji internetowej platforma realizuje podłączenie do sieci WiFi. Po uruchomieniu platformy wykonuje sie próbę podłączenie do sieci WiFi. \newline
+Jeżeli połączenie się odbyło to zostają wykonywane następujące czynności:
+\begin{enumerate}
+\item Uruchomienie procesu, zbierającego wyniki z czujników,
+\item Włączenie Telegram botu,
+\item Włączenie aplikacji internetowej, wizualizującej dane
+\end{enumerate}
+\newline
+Jeżeli połączenie się nie udało to aplikacja reaguje następująco:
+\begin{enumerate}
+\item Zostaje uruchomiony Hotspot
+\item Uruchamia się aplikacja do konfiguracji WiFi
+\end{enumerate}
+
+\subsection{Wyświetlenie danych w aplikacji internetowej}
+
+Celem aplikacji internetowej jest wizualizacja danych, pobranych za pomocą czujników podłączonych do platformy Raspberry Pi.
+Dane są wyświetlane za pomocą histogramów. Wykresy pokazują jak często występuje każdy z zadanych zakresów temperatury, natężenia światła i wilgotności.
+Wykresy w przeglądarce muszą się odświeżać asynchronicznie po zmianie pliku z danymi.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{exampleChart.png}
+\caption{Histogram temperatury}
+\end{figure}
+
+\subsection{Uzyskanie danych za pomocą Telegram botu}
+
+\paragraph{Telegam bot} jest aplikacją wykorzystującą interfejs aplikacji \textit{Telegram}
+w celu komunikacji z wybranymi użytkownikami (którzy posiadają możliwość komunikacji ze stworzonym
+\textit{bot'em}).\newline
+Uzyskane przez platformę dane mogą być wysłane do użytkownika, który ma dostęp do Telegram botu. Dane są wysyłane na żądanie i mogą być jak w postaci tekstu, tak i w postaci obrazu histogramu.
+
+
+
+\section{Implementacja}
+       
         
         \subsection{Wybór platformy web-serwera}
 	Aplikacja internetowa została stworzona za pomocą \textsl{frameworku} \texttt{Flask}. 
