@@ -105,13 +105,13 @@ Specjalność: & \@specjalnosc\\
 Celem danego projektu jest wykorzystanie platformy \textit{Raspberry}
 do realizacji \textit{Telegram bot'u} oraz punktu pomiarowego.
 
-Założenia projektu:
+\subsection{Założenia projektu}
 \begin{enumerate}
 \item Platforma musi odzyskiwać dane za pomocą podłączonych czujników
 \item Uzyskane dane są przechowywane na dysku twardym platformy
 \item Platforma musi się podłączać do istniejącej sieci WiFi lub uruchamiać Hotspot
 \item Do wizualizacji pobranych danych służy aplikacja internetowa. Dane są wyświetlane w postaci histogramów
-\item Platforma musi implementować API Telegram bota. Odzyskane przez platformę dane mogą być wysyłane do użytkownika w postaci tekstu albo wykresów.
+\item Platforma musi implementować API Telegram bota. Uzyskane przez platformę dane mogą być wysyłane do użytkownika w postaci tekstu albo wykresów.
 \end{enumerate}
 
 \section{Spis funkcjonalności}
@@ -139,10 +139,11 @@ Dane zostają pobrane raz na 1 minute.
 \subsection{Gromadzenie danych}
 
 Uzyskane dane są gromadzone w pamięci platformy RaspberryPi. Dane są zapisywane do pliku z rozszerzeniem \textit{csv}, w którym za każdy parametr odpowiada osobna kolumna.
-\newline Zapis danych do pliku jest potrzebny w celu wizualizacji danych w aplikacji internetowej i generowania odpowiedzi na zapytanie Telegram botu.
 
+Zapis danych do pliku jest potrzebny w celu wizualizacji danych w aplikacji internetowej i generowania odpowiedzi na zapytanie Telegram botu.
+
+\newpage
 \subsection{Podłączenie RPI do sieci WiFi}
-
 W celu uruchomienia aplikacji internetowej platforma realizuje podłączenie do sieci WiFi. Po uruchomieniu platformy wykonuje sie próbę podłączenie do sieci WiFi. \newline
 Jeżeli połączenie się odbyło to zostają wykonywane następujące czynności:
 \begin{enumerate}
@@ -218,6 +219,7 @@ function drawChart(chart_divId, chart_title) {
     Dodatkowym zadaniem skryptu w języku \texttt{JavaScript} jest kategoryzowanie danych
     dla różnych zakresów, zanim wykres będzie stworzony.
 
+    \newpage
     Wartości dla osi \texttt{x} są nazwami zakresów, 
     do których może należeć wartość przekazana z serwera. 
     Dane zakresy są zdefiniowane statyczne i zadeklarowane na samym początku skryptu.
