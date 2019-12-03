@@ -156,8 +156,15 @@ Jeżeli połączenie się nie udało to aplikacja reaguje następująco:
 \item Uruchamia się aplikacja do konfiguracji WiFi
 \end{enumerate}
 
-\subsection{Wyświetlenie danych w aplikacji internetowej}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=1]{diagram2.pdf}
+  \caption{Model połączenia \texttt{RPI} do sieci \texttt{WiFi}}
+\end{figure}
 
+
+\newpage
+\subsection{Wyświetlenie danych w aplikacji internetowej}
 Celem aplikacji internetowej jest wizualizacja danych, pobranych za pomocą czujników podłączonych do platformy Raspberry Pi.
 Dane są wyświetlane za pomocą histogramów. Wykresy pokazują jak często występuje każdy z zadanych zakresów temperatury, natężenia światła i wilgotności.
 Wykresy w przeglądarce muszą się odświeżać asynchronicznie po zmianie pliku z danymi.
@@ -166,7 +173,13 @@ Wykresy w przeglądarce muszą się odświeżać asynchronicznie po zmianie plik
 \includegraphics[scale=0.3]{exampleChart.png}
 \caption{Histogram temperatury}
 \end{figure}
-
+Poniższy model przedstawia przepływ danych od czujników do użytkowników 
+końcowych.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=1]{diagram1.pdf}
+  \caption{Model uzyskania i udostępniania danych}
+\end{figure}
 \subsection{Uzyskanie danych za pomocą Telegram botu}
 
 \paragraph{Telegam bot} jest aplikacją wykorzystującą interfejs aplikacji \textit{Telegram}
